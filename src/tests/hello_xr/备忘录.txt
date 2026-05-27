@@ -1,0 +1,26 @@
+build构建：  
+  mkdir build\win64
+  cd build\win64
+  cmake -G "Visual Studio 17" -A x64 ..\..
+  cmake --build . --config RelWithDebInfo --parallel
+
+运行HelloXR：
+  cd build\win64\src\tests\hello_xr\RelWithDebInfo
+  .\hello_xr.exe -g D3D11 --log-level=verbose >log1.txt
+
+开启OpenXR调试日志：
+  PowerShell:
+  $env:XR_LOADER_DEBUG = "all"    //  VS中：工程 - 属性 - 调试 - 环境 XR_LOADER_DEBUG=all
+  .\hello_xr.exe
+
+  CMD:
+  set XR_LOADER_DEBUG=all
+  hello_xr.exe
+
+log文件编码问题：
+  Powershell5.1默认使用 UTF-16 LE 编码输出日志，导致日志文件在某些编辑器中显示异常。
+  启动进程前把 PowerShell 的输出编码设为 UTF-8：
+    [Console]::OutputEncoding = [Text.Encoding]::UTF8
+    .\hello_xr.exe -g D3D11 > log1.txt
+  或者启动pwsh 7.x，默认输出编码就是 UTF-8：
+    pwsh -Command ".\hello_xr.exe -g D3D11 > log1.txt"

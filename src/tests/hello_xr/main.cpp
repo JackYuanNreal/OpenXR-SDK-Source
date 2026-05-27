@@ -288,6 +288,9 @@ void android_main(struct android_app* app) {
 #else
 int main(int argc, char* argv[]) {
     try {
+        // Redirect stdout/stderr to file for debugging in VS
+        freopen("log1.txt", "w", stdout);
+        freopen("log1.txt", "a", stderr);
         char cwd[MAX_PATH];
         GetCurrentDirectoryA(MAX_PATH, cwd);
         Log::Write(Log::Level::Info, Fmt("Current working directory: %s", cwd));
