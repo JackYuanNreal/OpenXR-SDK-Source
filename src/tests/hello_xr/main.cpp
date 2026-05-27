@@ -288,11 +288,17 @@ void android_main(struct android_app* app) {
 #else
 int main(int argc, char* argv[]) {
     try {
+        char cwd[MAX_PATH];
+        GetCurrentDirectoryA(MAX_PATH, cwd);
+        Log::Write(Log::Level::Info, Fmt("Current working directory: %s", cwd));
+        Log::SetLevel(Log::Level::Verbose);
+
         // Parse command-line arguments into Options.
         std::shared_ptr<Options> options = std::make_shared<Options>();
-        if (!UpdateOptionsFromCommandLine(*options, argc, argv)) {
-            return 1;
-        }
+        options->GraphicsPlugin = "D3D11";
+        // if (!UpdateOptionsFromCommandLine(*options, argc, argv)) {
+        //     return 1;
+        // }
 
         std::shared_ptr<PlatformData> data = std::make_shared<PlatformData>();
 

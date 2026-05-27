@@ -65,7 +65,13 @@ struct D3D11GraphicsPlugin : public IGraphicsPlugin {
         // Create the D3D11 device for the adapter associated with the system.
         XrGraphicsRequirementsD3D11KHR graphicsRequirements{XR_TYPE_GRAPHICS_REQUIREMENTS_D3D11_KHR};
         CHECK_XRCMD(pfnGetD3D11GraphicsRequirementsKHR(instance, systemId, &graphicsRequirements));
+        
+        Log::Write(Log::Level::Verbose, Fmt("D3D11 Graphics Requirements: AdapterLuid=%d:%d MinimumFeatureLevel=%d", graphicsRequirements.adapterLuid.HighPart,
+                                         graphicsRequirements.adapterLuid.LowPart, graphicsRequirements.minFeatureLevel));
+
         const ComPtr<IDXGIAdapter1> adapter = GetAdapter(graphicsRequirements.adapterLuid);
+
+        Log::Write(Log::Level::Verbose, "Creating D3D11 device...");
 
         // Create a list of feature levels which are both supported by the OpenXR runtime and this application.
         std::vector<D3D_FEATURE_LEVEL> featureLevels = {D3D_FEATURE_LEVEL_12_1, D3D_FEATURE_LEVEL_12_0, D3D_FEATURE_LEVEL_11_1,
@@ -80,6 +86,7 @@ struct D3D11GraphicsPlugin : public IGraphicsPlugin {
 
         InitializeResources();
 
+        Log::Write(Log::Level::Verbose, "D3D11 device created successfully");
         m_graphicsBinding.device = m_device.Get();
     }
 

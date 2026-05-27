@@ -113,8 +113,17 @@ struct OpenXrProgram : IOpenXrProgram {
         }
 
         if (m_session != XR_NULL_HANDLE) {
+            if (m_sessionRunning) {
+                xrEndSession(m_session);
+            }
             xrDestroySession(m_session);
         }
+
+        // Release graphics plugin before destroying instance so that the
+        // D3D11 device (and other GPU resources) are freed while the runtime
+        // can still clean up its internal references.
+        m_graphicsPlugin.reset();
+        m_platformPlugin.reset();
 
         if (m_instance != XR_NULL_HANDLE) {
             xrDestroyInstance(m_instance);
@@ -210,7 +219,7 @@ struct OpenXrProgram : IOpenXrProgram {
         strcpy(createInfo.applicationInfo.applicationName, "HelloXR");
 
         // Current version is 1.1.x, but hello_xr only requires 1.0.x
-        createInfo.applicationInfo.apiVersion = XR_API_VERSION_1_0;
+        createInfo.applicationInfo.apiVersion = XR_API_VERSION_1_1;
 
         CHECK_XRCMD(xrCreateInstance(&createInfo, &m_instance));
     }
